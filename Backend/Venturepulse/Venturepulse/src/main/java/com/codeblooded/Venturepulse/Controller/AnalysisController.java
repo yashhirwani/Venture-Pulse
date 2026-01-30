@@ -3,13 +3,14 @@ package com.codeblooded.Venturepulse.Controller;
 import com.codeblooded.Venturepulse.Models.Idea;
 import com.codeblooded.Venturepulse.Models.Report;
 import com.codeblooded.Venturepulse.Service.AnalysisService;
+import org.springframework.boot.origin.Origin;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/analysis")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class AnalysisController {
 
     private final AnalysisService service;

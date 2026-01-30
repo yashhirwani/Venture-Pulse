@@ -1,4 +1,5 @@
-package com.codeblooded.controller;
+package com.codeblooded.Venturepulse.Controller;
+
 
 import com.codeblooded.Venturepulse.Models.users;
 import com.codeblooded.Venturepulse.Service.AuthService;
@@ -6,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthService service;
