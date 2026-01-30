@@ -1,0 +1,107 @@
+:host {
+  --sidebar-bg: #0f172a; /* Slate 900 */
+  --sidebar-active: #6366f1; /* Indigo Accent */
+  --text-muted: #94a3b8;
+  --text-white: #ffffff;
+}
+
+
+.sidebar-container {
+  width: 260px;
+  height: 100%;
+  background: #0f172a;
+
+}
+
+/* Header & Brand */
+.sidebar-header {
+  padding: 30px 24px; /* Give the logo enough breathing room from the top */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  background: var(--sidebar-active);
+  color: white;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.logo-icon {
+  width: 35px;
+  height: 35px;
+  /* Ensure no position: absolute is here */
+}
+
+.brand-name {
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+
+.highlight { color: var(--sidebar-active); }
+
+/* Navigation Links */
+.sidebar-nav { flex: 1; }
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.03);
+  color: var(--text-white);
+}
+
+.active-link {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: var(--sidebar-active) !important;
+}
+
+.nav-icon { font-size: 1.2rem; }
+
+/* Footer */
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 20px;
+}
+
+.btn-logout {
+  width: 100%;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 15px;
+  color: #ef4444; /* Alert Red */
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-logout:hover { background: rgba(239, 68, 68, 0.05); }

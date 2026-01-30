@@ -12,6 +12,10 @@ import { CompetitorListComponent } from './competitor-list/competitor-list.compo
 import { BigPlayerAlertsComponent } from './big-player-alerts/big-player-alerts.component';
 import { RecommendationsComponent } from './recommendations/recommendations.component';
 import { ReportCardComponent } from './report-card/report-card.component';
+import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChartComponent } from '../shared/chart/chart.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 
@@ -31,7 +35,11 @@ import { ReportCardComponent } from './report-card/report-card.component';
     ReportCardComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedModule
   ]
 })
 export class WorkspaceModule { }

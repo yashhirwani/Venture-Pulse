@@ -1,1 +1,19 @@
-<p>chart works!</p>
+<div class="chart-container">
+  <svg viewBox="0 0 200 60" preserveAspectRatio="none" class="trend-svg">
+    <defs>
+      <linearGradient [id]="'grad-' + color" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" [style.stop-color]="color" stop-opacity="0.2" />
+        <stop offset="100%" [style.stop-color]="color" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+
+    <polyline
+      fill="none"
+      [attr.stroke]="color"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      [attr.points]="points"
+    />
+  </svg>
+</div>

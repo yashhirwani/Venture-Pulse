@@ -20,6 +20,10 @@ import { EmptyStateComponent } from './empty-state/empty-state.component';
   ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    ChartComponent,
+    LoaderComponent
   ]
 })
 export class SharedModule { }

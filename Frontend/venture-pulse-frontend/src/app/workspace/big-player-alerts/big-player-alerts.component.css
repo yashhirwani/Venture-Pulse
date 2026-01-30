@@ -1,0 +1,68 @@
+.alerts-container {
+  background: #fffafa; /* Subtle red tint for urgency */
+  border: 1px solid #fee2e2;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 30px;
+}
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.alerts-header h3 { margin: 0; color: #991b1b; font-size: 1.1rem; }
+.highlight { color: #dc2626; }
+
+.alerts-description {
+  font-size: 0.85rem;
+  color: #7f1d1d;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.alert-item {
+  display: block; /* Changed from flex to block for simpler text flow */
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #fecaca;
+  transition: transform 0.2s;
+}
+
+.alert-item:hover { transform: translateX(5px); }
+
+.player-name { font-weight: 800; font-size: 1rem; color: #1e293b; margin-right: 10px; }
+
+.threat-badge {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Threat Level Colors */
+[data-threat="High"] .threat-badge { background: #fee2e2; color: #dc2626; }
+[data-threat="Medium"] .threat-badge { background: #fef3c7; color: #d97706; }
+[data-threat="Low"] .threat-badge { background: #f0fdf4; color: #16a34a; }
+
+.product-info { font-size: 0.8rem; color: #64748b; margin: 4px 0; }
+.alert-details { font-size: 0.85rem; color: #475569; margin: 0; line-height: 1.4; }
+
+.btn-strategy {
+  background: none;
+  border: 1.5px solid #ef4444;
+  color: #ef4444;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-strategy:hover { background: #ef4444; color: white; }

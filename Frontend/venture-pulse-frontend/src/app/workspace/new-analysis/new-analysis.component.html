@@ -1,1 +1,55 @@
-<p>new-analysis works!</p>
+<div class="analysis-container">
+  <app-loader *ngIf="isSubmitting"></app-loader>
+
+  <div class="form-card glass" *ngIf="!isSubmitting">
+    <header class="form-header">
+      
+      <h1>New <span class="highlight">Analysis Scan</span></h1>
+      <p>Enter the startup details to begin the market & risk assessment.</p>
+    </header>
+
+    <form (ngSubmit)="startNeuralScan()" #scanForm="ngForm">
+      <div class="input-group">
+        <label>Startup Name</label>
+        <input type="text" name="name" [(ngModel)]="analysisForm.startupName" placeholder="e.g. NexusFlow AI" required>
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Industry</label>
+          <select name="industry" [(ngModel)]="analysisForm.industry" required>
+            <option value="">Select Industry...</option>
+            <option value="SaaS">SaaS</option>
+            <option value="FinTech">FinTech</option>
+            <option value="HealthTech">HealthTech</option>
+            <option value="Web3">Web3</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Primary Market</label>
+          <select name="market" [(ngModel)]="analysisForm.targetMarket">
+            <option value="Global">Global</option>
+            <option value="North America">North America</option>
+            <option value="Europe">Europe</option>
+            <option value="Asia">Asia</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Concept Description</label>
+        <textarea 
+          name="desc" 
+          [(ngModel)]="analysisForm.description" 
+          placeholder="Describe the problem, solution, and core technology..."
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="!scanForm.valid">
+        Initialize Neural Engine
+      </button>
+    </form>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FooterComponent } from './footer/footer.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -15,7 +16,12 @@ import { FooterComponent } from './footer/footer.component';
     FooterComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
+  ],
+  exports: [
+    SidebarComponent,
+    NavbarComponent
   ]
 })
 export class CoreModule { }

@@ -1,1 +1,21 @@
-<p>big-player-alerts works!</p>
+<div class="alerts-container">
+  <div class="alerts-header">
+    <span class="alert-icon">⚠️</span>
+    <h3>Incumbent <span class="highlight">Threat Alerts</span></h3>
+  </div>
+  
+  <p class="alerts-description">AI-detected movements from major market players that may impact your competitive advantage.</p>
+
+  <div class="alerts-list">
+    <div class="alert-item" *ngFor="let alert of alerts" [attr.data-threat]="alert.threat">
+      <div class="alert-main">
+        <div class="alert-title">
+          <span class="player-name">{{ alert.name }}</span>
+          <span class="threat-badge">{{ alert.threat }} Threat</span>
+        </div>
+        <div class="product-info">Targeting: <strong>{{ alert.product }}</strong></div>
+        <p class="alert-details">{{ alert.details }}</p>
+      </div>
+      </div>
+  </div>
+</div>

@@ -1,1 +1,69 @@
-<p>dashboard works!</p>
+<div class="dashboard-wrapper">
+  <app-loader *ngIf="isLoading"></app-loader>
+
+  <ng-container *ngIf="!isLoading">
+    <header class="dashboard-header">
+      <h1>Welcome back, <span class="highlight">Founder</span></h1>
+      <p>Here is an overview of your venture portfolio performance.</p>
+    </header>
+
+    <section class="stats-grid">
+      <div class="stat-card glass">
+        <label>Total Analyses</label>
+        <div class="stat-value">{{ stats.totalAnalyses }}</div>
+        <app-chart [data]="[10, 15, 12, 25, 22, 30]" color="#6366f1"></app-chart>
+        <span class="stat-trend">+2 this week</span>
+      </div>
+
+      <div class="stat-card glass">
+        <label>Avg. Risk Score</label>
+        <div class="stat-value">{{ stats.averageRisk }}%</div>
+        <app-chart [data]="[40, 42, 38, 45, 41, 40]" color="#94a3b8"></app-chart>
+        <span class="stat-trend neutral">Stable</span>
+      </div>
+
+      <div class="stat-card glass">
+        <label>Promising Ideas</label>
+        <div class="stat-value">{{ stats.promisingIdeas }}</div>
+        <app-chart [data]="[5, 8, 12, 10, 15, 20]" color="#22c55e"></app-chart>
+        <span class="stat-trend positive">66% success rate</span>
+      </div>
+    </section>
+
+    <div class="dashboard-content">
+      <section class="activity-section glass">
+        <div class="section-header">
+          <h3>Recent Analyses</h3>
+          <button class="btn-text" routerLink="/workspace/history">View All →</button>
+        </div>
+        
+        <div class="report-list">
+          <div class="no-data" *ngIf="recentReports.length === 0">
+            No recent analyses found. Start by analyzing a new idea.
+          </div>
+
+          <div class="report-card-mini" *ngFor="let report of recentReports">
+            <div class="card-info">
+              <strong>{{ report.startupName }}</strong>
+              <small>{{ report.createdAt | date:'shortDate' }}</small>
+            </div>
+            <div class="card-badge" [attr.data-verdict]="report.verdict">
+              {{ report.verdict }}
+            </div>
+            <button class="btn-icon" [routerLink]="['/workspace/report', report.id]">→</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="actions-section">
+        <div class="action-card primary" routerLink="/workspace/new-analysis">
+          <div class="action-icon">+</div>
+          <div class="action-text">
+            <strong>Analyze New Idea</strong>
+            <p>Run our AI engine on a fresh concept.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </ng-container>
+</div>

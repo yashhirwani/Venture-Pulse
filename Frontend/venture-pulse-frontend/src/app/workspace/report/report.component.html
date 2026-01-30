@@ -1,1 +1,79 @@
-<p>report works!</p>
+<div class="report-wrapper" *ngIf="!isLoading">
+  <div class="report-container">
+    <header class="report-nav no-print">
+      <div class="nav-left" routerLink="/workspace/dashboard">← Back to Dashboard</div>
+      <button class="btn-pdf-export">Export Intelligence Brief (PDF)</button>
+    </header>
+
+    <main class="report-sheet">
+      <div class="identity-row">
+        <div>
+          <div class="security-label">Confidential Brief</div>
+          <h1>{{ report.title }}</h1>
+        </div>
+
+        <div class="verdict-tag" [attr.data-verdict]="report.verdict">
+          <span class="label">Final Verdict</span>
+          <span class="value">{{ report.verdict }}</span>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="grid-card main-gauge-card">
+          <h3 class="card-title">Risk Profile</h3>
+          <div class="gauge-track">
+            <div class="gauge-fill" 
+                 [attr.data-level]="report.risk.level" 
+                 [style.transform]="gaugeRotation">
+            </div>
+            <div class="gauge-mask">
+              <div class="score-display">
+                <div class="percentage">{{ report.risk.score }}%</div>
+                <div class="risk-text" [attr.data-level]="report.risk.level">
+                  {{ report.risk.level }} Risk
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-card market-insights">
+          <h3 class="card-title">Market Dynamics</h3>
+          <div class="insight-row">
+            <span>Maturity</span>
+            <strong>{{ report.market.maturity }}</strong>
+          </div>
+          <div class="insight-row-visual">
+            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+              <span>Demand Trend</span>
+              <strong class="trend-up">{{ report.market.demand }}</strong>
+            </div>
+            <app-chart [data]="[20, 35, 50, 45, 70, 85]" color="#6366f1"></app-chart>
+          </div>
+          <div class="insight-row">
+            <span>Viability</span>
+            <strong>{{ report.market.potential }}</strong>
+          </div>
+        </div>
+
+        <div class="grid-card alerts-card full-width">
+          <app-big-player-alerts [alerts]="report.incumbentAlerts"></app-big-player-alerts>
+        </div>
+
+        <div class="grid-card recommendations full-width">
+          <h3 class="card-title">Strategic Roadmap</h3>
+          <div class="rec-grid">
+            <div class="rec-item" *ngFor="let rec of report.recommendations; let i = index">
+              <span class="index">0{{ i + 1 }}</span>
+              <p>{{ rec }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="report-footer">
+        <p>Venture Pulse Intelligence • Generated on {{ report.timestamp | date:'medium' }}</p>
+      </footer>
+    </main>
+  </div>
+</div>

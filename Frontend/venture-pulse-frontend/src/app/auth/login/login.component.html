@@ -1,1 +1,82 @@
-<p>login works!</p>
+<div class="auth-container">
+  <div class="auth-visual">
+    <div class="visual-content">
+      <img src="assets/logo.png" alt="Venture Pulse" class="brand-logo-large">
+      <h1>Welcome <br><span class="accent-text">Back.</span></h1>
+      <p>Log in to resume your startup risk assessments and market intelligence tracking.</p>
+    </div>
+    
+    <div class="glass-footer">
+      <div class="quote-box">
+        <p>"The most accurate risk mapping tool I've used in a decade of venture capital."</p>
+        <span>— Managing Director, Vertex Labs</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-section">
+    <div class="form-wrapper">
+      <header class="form-header">
+        <h2>Sign In</h2>
+        <p>Enter your credentials to access your workspace.</p>
+      </header>
+
+      <div class="social-grid">
+        <button type="button" class="social-btn" (click)="socialLogin('google')">
+          <div class="icon-container">
+            <img src="https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png" alt="Google">
+          </div>
+          <span>Google</span>
+        </button>
+        <button type="button" class="social-btn" (click)="socialLogin('github')">
+          <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub">
+          </div>
+          <span>GitHub</span>
+        </button>
+        <button type="button" class="social-btn" (click)="socialLogin('linkedin')">
+          <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+          </div>
+          <span>LinkedIn</span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>OR CONTINUE WITH EMAIL</span>
+      </div>
+
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" [(ngModel)]="loginData.email" name="email" placeholder="name@company.com" required email>
+        </div>
+
+        <div class="input-group" *ngIf="!otpMode">
+          <div class="label-row">
+            <label>Password</label>
+            <a routerLink="/forgot-password" class="text-link small">Forgot?</a>
+          </div>
+          <input type="password" [(ngModel)]="loginData.password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn-primary-gradient" [disabled]="isLoading || !loginForm.valid">
+          <span *ngIf="!isLoading">{{ otpMode ? 'Send Magic Link' : 'Sign In' }}</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+        </button>
+      </form>
+
+      <div class="mode-toggle">
+        <button (click)="otpMode = !otpMode" class="ghost-btn">
+          {{ otpMode ? 'Sign in with password' : 'Sign in with Email OTP / Magic Link' }}
+        </button>
+      </div>
+
+      <footer class="form-footer">
+        <p>Don't have an account? <a routerLink="/signup">Create one</a></p>
+      </footer>
+    </div>
+  </div>
+</div>

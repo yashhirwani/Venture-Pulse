@@ -1,0 +1,97 @@
+.nav-container-fixed {
+  height: 70px;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  /* Reduced horizontal padding to 16px to prevent clipping */
+  padding: 0 16px; 
+  box-sizing: border-box; /* Crucial: ensures padding doesn't add to width */
+  position: relative;
+  z-index: 999;
+}
+
+/* SEARCH ALIGNMENT */
+.nav-content-left {
+  flex: 0 0 auto;
+  margin-left: 10px; /* Pulls search a bit closer to the sidebar boundary */
+}
+
+.search-box {
+  background: #f1f5f9;
+  padding: 8px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 320px;
+}
+
+.search-box input {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+/* PROFILE ALIGNMENT */
+.nav-content-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+  margin-left: auto; /* Pushes the entire block to the right edge */
+}
+
+.nav-date {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+  white-space: nowrap; /* Prevents date from splitting into two lines */
+}
+
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.nav-user {
+  text-align: right;
+  line-height: 1.2;
+}
+
+.nav-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.nav-role {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #6366f1;
+  text-transform: uppercase;
+}
+
+.nav-avatar {
+  width: 36px;
+  height: 36px;
+  background: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #6366f1;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}

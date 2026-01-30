@@ -1,0 +1,77 @@
+/* public/hero-section/hero-section.component.css */
+.hero {
+  background: radial-gradient(circle at top right, #1e293b, #0f172a);
+  padding: 160px 10% 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80vh;
+  color: #f8fafc;
+}
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-text h1 {
+  font-size: 4.5rem;
+  font-weight: 850;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+
+.highlight {
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pill-label {
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.hero-text p {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+
+/* Graphic/Mockup Container */
+.hero-graphic {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 40px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.hero-graphic::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: #6366f1;
+  filter: blur(80px);
+  opacity: 0.3;
+}

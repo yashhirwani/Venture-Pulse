@@ -1,1 +1,44 @@
-<p>landing works!</p>
+<div class="landing-scope">
+  <nav class="public-nav">
+    <div class="logo">Venture<span>Pulse</span></div>
+    <div class="nav-links">
+      <button class="btn-nav-link" routerLink="/login">Login</button>
+      <button class="btn-nav-primary" routerLink="/signup">Join Engine</button>
+    </div>
+  </nav>
+
+  <header class="hero-section">
+    <div class="hero-content">
+      <div class="intel-badge">
+        <span class="pulse-dot"></span> V.02 Intelligence Engine
+      </div>
+      <h1>Neural <span class="highlight">Risk</span> Analysis for <span class="highlight">Venture Capital</span></h1>
+      <p class="hero-subline">AI-powered risk intelligence trained on real-world market signals.</p>
+      
+      <div class="hero-actions">
+        <button class="btn-main-glow" routerLink="/signup">Analyze Your First Idea →</button>
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item"><strong>200+</strong> Analyses generated</div>
+        <div class="trust-item"><strong>94%</strong> Confidence accuracy</div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="live-feed-card">
+        <div class="feed-header">
+          <span class="status">LIVE FEED</span>
+          <span class="timestamp">0.02ms latency</span>
+        </div>
+        <div class="chart-container">
+          <app-chart [data]="heroChartData" color="#818cf8"></app-chart>
+        </div>
+        <div class="metric-grid">
+          <div class="metric-pill">Risk Confidence <span>{{heroChartData[5]}}%</span></div>
+          <div class="metric-pill">Market Signal <span>Strong</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+</div>

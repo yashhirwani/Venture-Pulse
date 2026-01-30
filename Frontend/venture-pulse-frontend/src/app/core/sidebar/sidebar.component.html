@@ -1,1 +1,26 @@
-<p>sidebar works!</p>
+<aside class="sidebar-container">
+  <div class="sidebar-header">
+    <div class="logo">VP</div>
+    <span class="brand-name">Venture<span class="highlight">Pulse</span></span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li *ngFor="let item of navItems">
+        <a [routerLink]="item.route" 
+           routerLinkActive="active-link" 
+           class="nav-item">
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" (click)="logout()">
+      <span class="nav-icon">⎗</span>
+      <span class="nav-label">Logout</span>
+    </button>
+  </div>
+</aside>

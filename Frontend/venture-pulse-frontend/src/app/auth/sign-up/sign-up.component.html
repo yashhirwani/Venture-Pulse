@@ -1,1 +1,110 @@
-<p>sign-up works!</p>
+<div class="auth-container">
+  <div class="auth-visual">
+    <div class="top-section">
+      <img src="assets/logo.png" alt="Venture Pulse" class="brand-logo-large">
+      <div class="hero-text-wrapper">
+        <h1>Build with <br><span class="accent-text">Certainty.</span></h1>
+        <p>Turn your startup idea into a data-backed venture with AI-driven risk mapping.</p>
+      </div>
+      
+      <ul class="feature-list">
+        <li><span class="dot"></span> AI-Powered Risk Mapping</li>
+        <li><span class="dot"></span> Real-time Market Intelligence</li>
+        <li><span class="dot"></span> Competitor Pivot Alerts</li>
+      </ul>
+    </div>
+
+    <div class="visual-center">
+      <div class="mini-dashboard-preview">
+        <div class="line long"></div>
+        <div class="line med"></div>
+        <div class="line short"></div>
+      </div>
+    </div>
+    
+    <div class="glass-footer">
+      <div class="stat-group">
+        <div class="stat-item">
+          <strong>98%</strong>
+          <span>Accuracy</span>
+        </div>
+        <div class="stat-item">
+          <strong>10k+</strong>
+          <span>Founders</span>
+        </div>
+      </div>
+      <div class="trust-badge">
+        <small>Trusted by</small>
+        <p>Y-Combinator Alums</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-section">
+    <div class="form-wrapper">
+      <header class="form-header">
+        <h2>Create Account</h2>
+        <p>Join Venture Pulse and start your first analysis.</p>
+      </header>
+
+      <div class="social-grid">
+        <button type="button" class="social-btn" (click)="socialLogin('google')">
+          <div class="icon-container">
+            <img src="https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png" alt="Google">
+          </div>
+          <span>Google</span>
+        </button>
+        <button type="button" class="social-btn" (click)="socialLogin('github')">
+          <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub">
+          </div>
+          <span>GitHub</span>
+        </button>
+        <button type="button" class="social-btn" (click)="socialLogin('linkedin')">
+          <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+          </div>
+          <span>LinkedIn</span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>OR REGISTER WITH EMAIL</span>
+      </div>
+
+      <form (ngSubmit)="onSignUp()" #signupForm="ngForm">
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="userData.fullName" name="fullName" placeholder="Enter your name" required>
+        </div>
+
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" [(ngModel)]="userData.email" name="email" placeholder="name@company.com" required email>
+        </div>
+
+        <div class="input-row">
+  <div class="input-group">
+    <label>Password</label>
+    <input type="password" [(ngModel)]="userData.password" name="password" placeholder="••••••••">
+  </div>
+  <div class="input-group">
+    <label>Confirm</label>
+    <input type="password" [(ngModel)]="userData.confirmPassword" name="confirmPassword" placeholder="••••••••">
+  </div>
+</div>
+
+        <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn-primary-gradient" [disabled]="isLoading || !signupForm.valid">
+          <span *ngIf="!isLoading">Get Started for Free</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+        </button>
+      </form>
+
+      <footer class="form-footer">
+        <p>Already have an account? <a routerLink="/login">Sign In</a></p>
+      </footer>
+    </div>
+  </div>
+</div>

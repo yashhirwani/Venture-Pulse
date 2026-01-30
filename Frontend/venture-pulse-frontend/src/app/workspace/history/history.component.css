@@ -1,0 +1,159 @@
+.history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.vault-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.search-input {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  width: 300px;
+  outline: none;
+  background: white;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 15px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.history-table td {
+  padding: 20px 15px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+}
+
+/* Verdict badge */
+.v-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.v-badge[data-verdict="PROMISING"] {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.v-badge[data-verdict="RISKY"] {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.v-badge[data-verdict="AVOID"] {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* Risk bar */
+.risk-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-bar-container {
+  width: 100px;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.risk-bar-fill {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 10px;
+}
+
+.risk-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  min-width: 32px;
+}
+
+/* Action button */
+.btn-view {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-view:hover {
+  background: #6366f1;
+  color: white;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+
+/* Add to history.component.css */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🚀 Prevents data from bunching up */
+}
+
+.history-table th:nth-child(1) { width: 25%; } /* Entity */
+.history-table th:nth-child(2) { width: 15%; } /* Domain */
+.history-table th:nth-child(3) { width: 15%; } /* Verdict */
+.history-table th:nth-child(4) { width: 20%; } /* Risk Score */
+.history-table th:nth-child(5) { width: 15%; } /* Date */
+.history-table th:nth-child(6) { width: 10%; } /* Actions */
+
+.startup-cell strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* history.component.css additions */
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-delete {
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #dc2626;
+}

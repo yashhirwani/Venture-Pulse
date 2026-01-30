@@ -1,1 +1,30 @@
-<p>processing works!</p>
+<div class="processing-container">
+  <div class="content-wrapper glass">
+    <div class="ai-pulse">
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="core">AI</div>
+    </div>
+
+    <header>
+      <h1>Analyzing Your <span class="highlight">Vision</span></h1>
+      <p>Venture Pulse is crunching thousands of data points to map your startup's trajectory.</p>
+    </header>
+
+    <div class="progress-section">
+      <div class="progress-bar-container">
+        <div class="progress-fill" [style.width.%]="progress"></div>
+      </div>
+      <div class="progress-meta">
+        <span class="status-text">{{ statusMessage }}</span>
+        <span class="percentage">{{ progress }}%</span>
+      </div>
+    </div>
+
+    <div class="security-note">
+      <img src="https://cdn-icons-png.flaticon.com/512/2504/2504784.png" alt="Lock" class="lock-icon">
+      <span>Your data is encrypted and analyzed in a private environment.</span>
+    </div>
+  </div>
+</div>

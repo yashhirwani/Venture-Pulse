@@ -1,0 +1,27 @@
+/* app-layout.component.css */
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.side-nav {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.main-viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Keeps navbar at the top */
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto; /* THIS IS THE FIX: Enables scrolling for the dashboard */
+  height: calc(100vh - 70px); /* Total height minus the Navbar */
+  padding: 40px;
+  background-color: #f8fafc;
+}
