@@ -1,5 +1,7 @@
 package com.codeblooded.Venturepulse.Service;
 
+import com.codeblooded.Venturepulse.DTO.AnalyzeRequestDTO;
+import com.codeblooded.Venturepulse.DTO.AnalyzeResponseDTO;
 import com.codeblooded.Venturepulse.Models.Idea;
 import com.codeblooded.Venturepulse.Models.Report;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,15 +13,17 @@ import java.util.List;
 public class AnalysisService {
 
     private final JdbcTemplate jdbc;
+    private final AiClientService aiClientService;
 
-    public AnalysisService(JdbcTemplate jdbc) {
+    public AnalysisService(JdbcTemplate jdbc, AiClientService aiClientService) {
         this.jdbc = jdbc;
+        this.aiClientService = aiClientService;
     }
 
     // Submit idea and generate report
     public Report submitIdea(Idea idea) {
 
-        // 1. Save idea
+        // 1️⃣ Save idea
         jdbc.update(
                 "INSERT INTO ideas(user_id, idea_text, domain, target_users, pricing_model, team_info) VALUES (?, ?, ?, ?, ?, ?)",
                 idea.getUserId(),
@@ -32,19 +36,30 @@ public class AnalysisService {
 
         Long ideaId = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
 
-        // 2. Mock AI response (replace later with ML call)
-        int riskScore = 72;
-        String verdict = "High Risk";
-        String competitors = "[{\"name\":\"StartupX\"},{\"name\":\"StartupY\"}]";
-        String recommendations = "Validate market quickly and differentiate.";
+        // 2️⃣ Build request for Python
+        AnalyzeRequestDTO request = new AnalyzeRequestDTO();
+        request.setIdea(idea.getIdeaText());
+        request.setDomain(idea.getDomain());
+        request.setFunding_total_usd(500000);
+        request.setFunding_rounds(1);
+        request.setYears_since_founded(1);
+        request.setYears_since_last_funding(1);
 
-        // 3. Save report
+        // 3️⃣ Call Python ML API
+        AnalyzeResponseDTO response = aiClientService.analyzeStartup(request);
+
+        int riskScore = (int) response.getRisk_score();
+        String verdict = response.getRisk_label();
+        String competitors = response.getSimilar_startups().toString();
+        String recommendations = response.getExplanations().toString();
+
+        // 4️⃣ Save report
         jdbc.update(
                 "INSERT INTO reports(idea_id, risk_score, verdict, competitors, recommendations) VALUES (?, ?, ?, ?, ?)",
                 ideaId, riskScore, verdict, competitors, recommendations
         );
 
-        // 4. Return report object
+        // 5️⃣ Return report
         Report r = new Report();
         r.setIdeaId(ideaId);
         r.setRiskScore(riskScore);
@@ -59,12 +74,12 @@ public class AnalysisService {
     public List<Report> getUserHistory(Long userId) {
         return jdbc.query(
                 """
-                SELECT r.*
-                FROM reports r
-                JOIN ideas i ON r.idea_id = i.id
-                WHERE i.user_id = ?
-                ORDER BY r.id DESC
-                """,
+                        SELECT r.*
+                        FROM reports r
+                        JOIN ideas i ON r.idea_id = i.id
+                        WHERE i.user_id = ?
+                        ORDER BY r.id DESC
+                        """,
                 (rs, rowNum) -> {
                     Report r = new Report();
                     r.setId(rs.getLong("id"));
@@ -79,7 +94,7 @@ public class AnalysisService {
         );
     }
 
-    // Fetch single report by ID
+    // Fetch single report
     public Report getReportById(Long reportId) {
         return jdbc.queryForObject(
                 "SELECT * FROM reports WHERE id = ?",
