@@ -1,6 +1,5 @@
 import joblib
 import pandas as pd
-import numpy as np
 from similarity import SimilarityEngine
 
 MODEL_PATH = "models/risk_model.joblib"
@@ -12,209 +11,186 @@ class VenturePulsePredictor:
         print("Loading risk model...")
         self.model = joblib.load(MODEL_PATH)
 
-        print("Loading ML dataset for market stats...")
+        print("Loading ML dataset...")
         self.ml_df = pd.read_csv(ML_DATA_PATH)
 
         print("Loading similarity engine...")
         self.sim_engine = SimilarityEngine()
 
-        print("✅ VenturePulse Predictor Ready")
+        print(" VenturePulse Predictor Ready")
 
-    # -----------------------------
-    # Market Signals
-    # -----------------------------
-    def _compute_market_signals(self, similar_startups):
-        domains = [s['domain'] for s in similar_startups if s['domain']]
-        domain = domains[0] if domains else None
-
-        if domain and domain in self.ml_df['domain_clean'].values:
-            domain_df = self.ml_df[self.ml_df['domain_clean'] == domain]
-        else:
-            domain_df = self.ml_df
-
-        failed_rate = domain_df['status_failed'].mean()
-        avg_funding = domain_df['funding_total_usd'].mean()
-        avg_years_since_funding = domain_df['years_since_last_funding'].mean()
-
-        crowdedness = len(domain_df)
-
-        signals = {
-            "domain": domain,
-            "failed_rate": round(float(failed_rate), 3),
-            "avg_funding": round(float(avg_funding), 2),
-            "avg_years_since_last_funding": round(float(avg_years_since_funding), 2),
-            "crowdedness": crowdedness
-        }
-
-        return signals
-
-    # -----------------------------
-    # Launch Timing Predictor
-    # -----------------------------
-    def _predict_launch_timing(self, domain_clean):
+    # =================================================
+    # MARKET SIGNALS (DOMAIN-LEVEL — CORRECT DESIGN)
+    # =================================================
+    def _compute_market_signals(self, domain_clean):
         """
-        Predict how soon the product should be launched based on market momentum.
-        Uses years_since_founded as proxy for new company entry.
+        Compute market signals at DOMAIN level.
+        This avoids fragile name matching and is industry-correct.
         """
 
-        if domain_clean in self.ml_df['domain_clean'].values:
-            domain_df = self.ml_df[self.ml_df['domain_clean'] == domain_clean]
-        else:
+        domain_df = self.ml_df[self.ml_df["domain_clean"] == domain_clean]
+
+        # Fallback safety
+        if domain_df.empty:
             domain_df = self.ml_df
-
-        total_startups = len(domain_df)
-
-        # Startups founded in last 2 years
-        recent_startups = domain_df[domain_df['years_since_founded'] <= 2]
-        recent_count = len(recent_startups)
-
-        if total_startups == 0:
-            return {
-                "market_speed": "Unknown",
-                "recent_entry_rate": 0,
-                "recommended_launch_window": "Unknown",
-                "reason": "Insufficient market data"
-            }
-
-        recent_ratio = recent_count / total_startups
-
-        if recent_ratio > 0.25:
-            market_speed = "Heating Up"
-            launch_window = "Launch MVP within 3–4 months"
-            reason = "Many new startups are entering this market rapidly"
-        elif recent_ratio > 0.12:
-            market_speed = "Moderate Growth"
-            launch_window = "Launch within 6–8 months"
-            reason = "Steady new entrants, competition increasing"
-        else:
-            market_speed = "Slow / Early"
-            launch_window = "Safe window: 9–12 months"
-            reason = "Few new entrants, market still early or slow"
 
         return {
-            "market_speed": market_speed,
-            "recent_entry_rate": round(recent_ratio, 3),
-            "recommended_launch_window": launch_window,
-            "reason": reason
+            "failed_rate": round(domain_df["status_failed"].mean(), 3),
+            "avg_funding": round(domain_df["funding_total_usd"].mean(), 2),
+            "avg_years_since_last_funding": round(
+                domain_df["years_since_last_funding"].mean(), 2
+            ),
+            "crowdedness": len(domain_df),
         }
 
-    # -----------------------------
-    # Explanation Engine
-    # -----------------------------
-    def _generate_explanations(self, risk_score, signals, launch_timing):
+    # =================================================
+    # LAUNCH TIMING PREDICTOR
+    # =================================================
+    def _predict_launch_timing(self, domain_clean):
+        domain_df = self.ml_df[self.ml_df["domain_clean"] == domain_clean]
+
+        if domain_df.empty:
+            domain_df = self.ml_df
+
+        total = len(domain_df)
+        recent = len(domain_df[domain_df["years_since_founded"] <= 2])
+        ratio = recent / total if total > 0 else 0
+
+        if ratio > 0.25:
+            return {
+                "market_speed": "Heating Up",
+                "recent_entry_rate": round(ratio, 3),
+                "recommended_launch_window": "Launch MVP within 3–4 months",
+                "reason": "Rapid entry of new startups in this market",
+            }
+        elif ratio > 0.12:
+            return {
+                "market_speed": "Moderate Growth",
+                "recent_entry_rate": round(ratio, 3),
+                "recommended_launch_window": "Launch within 6–8 months",
+                "reason": "Steady growth in new competitors",
+            }
+        else:
+            return {
+                "market_speed": "Slow / Early",
+                "recent_entry_rate": round(ratio, 3),
+                "recommended_launch_window": "Safe window: 9–12 months",
+                "reason": "Low recent competitive pressure",
+            }
+
+    # =================================================
+    # EXPLANATION ENGINE (HONEST + DATA-DRIVEN)
+    # =================================================
+    def _generate_explanations(self, risk_score, signals, similar_startups):
         reasons = []
 
-        if signals['failed_rate'] > 0.6:
-            reasons.append("High historical failure rate in this domain")
+        if signals["failed_rate"] > 0.5:
+            reasons.append(
+                "Historically high failure rate in this domain"
+            )
 
-        if signals['avg_years_since_last_funding'] > 4:
-            reasons.append("Long gap since last funding is common in this market")
+        if signals["avg_years_since_last_funding"] > self.ml_df[
+            "years_since_last_funding"
+        ].quantile(0.75):
+            reasons.append(
+                "Long gaps since last funding are common in this domain"
+            )
 
-        if signals['avg_funding'] < 2_000_000:
-            reasons.append("Low average funding in this domain")
-
-        if signals['crowdedness'] > 5000:
-            reasons.append("Highly crowded market with many competitors")
-
-        if launch_timing['market_speed'] == "Heating Up":
-            reasons.append("Market is heating up — competition is increasing quickly")
+        if len(similar_startups) >= 5:
+            reasons.append(
+                "Multiple active competitors exist for similar ideas"
+            )
 
         if risk_score > 0.7:
-            reasons.append("Overall model predicts high failure risk")
+            reasons.append("ML model predicts relatively high failure risk")
+        elif risk_score < 0.3:
+            reasons.append("ML model predicts relatively low failure risk")
 
         if not reasons:
-            reasons.append("Market indicators are relatively neutral")
+            reasons.append(
+                "No strong historical risk indicators detected"
+            )
 
         return reasons
 
-    # -----------------------------
+    # =================================================
     # MAIN ANALYSIS PIPELINE
-    # -----------------------------
-    def analyze_startup(self, user_idea_text, domain_clean,
-                        funding_total_usd, funding_rounds,
-                        years_since_founded, years_since_last_funding):
+    # =================================================
+    def analyze_startup(
+        self,
+        user_idea_text,
+        domain_clean,
+        funding_total_usd,
+        funding_rounds,
+        years_since_founded,
+        years_since_last_funding,
+    ):
+        print("\n--- Analyzing Startup ---")
 
-        print("\n--- Analyzing New Startup ---")
-        print("Idea:", user_idea_text)
-
-        # 1. Similarity Search
+        #  Semantic similarity (competitors)
         similar = self.sim_engine.find_similar_startups(
             user_idea_text, top_n=5
         )
 
-        # 2. Market Signals
-        signals = self._compute_market_signals(similar)
+        #  Market intelligence (domain-level)
+        signals = self._compute_market_signals(domain_clean)
 
-        # 2B. Launch Timing
+        #  Launch timing
         launch_timing = self._predict_launch_timing(domain_clean)
 
-        # 3. ML Risk Prediction
-        input_df = pd.DataFrame([{
-            "funding_total_usd": funding_total_usd,
-            "funding_rounds": funding_rounds,
-            "years_since_founded": years_since_founded,
-            "years_since_last_funding": years_since_last_funding,
-            "domain_clean": domain_clean
-        }])
-
-        risk_proba = self.model.predict_proba(input_df)[0, 1]
-        risk_score = float(risk_proba)
-
-        # 4. Explanations
-        reasons = self._generate_explanations(
-            risk_score, signals, launch_timing
+        #  ML risk prediction
+        input_df = pd.DataFrame(
+            [
+                {
+                    "funding_total_usd": funding_total_usd,
+                    "funding_rounds": funding_rounds,
+                    "years_since_founded": years_since_founded,
+                    "years_since_last_funding": years_since_last_funding,
+                    "domain_clean": domain_clean,
+                }
+            ]
         )
 
-        # 5. Final Report
-        report = {
+        risk_score = float(self.model.predict_proba(input_df)[0, 1])
+
+        # Explanations
+        explanations = self._generate_explanations(
+            risk_score, signals, similar
+        )
+
+        return {
             "idea": user_idea_text,
             "domain": domain_clean,
             "risk_score": round(risk_score, 3),
             "risk_label": (
-                "High" if risk_score > 0.7 else
-                "Medium" if risk_score > 0.4 else
-                "Low"
+                "High"
+                if risk_score > 0.7
+                else "Medium"
+                if risk_score > 0.4
+                else "Low"
             ),
             "similar_startups": similar,
             "market_signals": signals,
             "launch_timing": launch_timing,
-            "explanations": reasons
+            "explanations": explanations,
         }
 
-        return report
 
-
-# -----------------------------
-# Manual Test
-# -----------------------------
+# =================================================
+# MANUAL TEST
+# =================================================
 if __name__ == "__main__":
     predictor = VenturePulsePredictor()
 
-    test_report = predictor.analyze_startup(
+    report = predictor.analyze_startup(
         user_idea_text="AI tool for automating resume screening for HR teams",
         domain_clean="AI",
         funding_total_usd=500000,
         funding_rounds=1,
         years_since_founded=1,
-        years_since_last_funding=1
+        years_since_last_funding=1,
     )
 
     print("\n===== VENTURE_PULSE REPORT =====")
-    print("Risk Score:", test_report['risk_score'])
-    print("Risk Label:", test_report['risk_label'])
-
-    print("\nSimilar Startups:")
-    for s in test_report['similar_startups']:
-        print("-", s['startup_name'], "|", s['domain'], "|", round(s['similarity_score'], 3))
-
-    print("\nMarket Signals:")
-    for k, v in test_report['market_signals'].items():
-        print(f"{k}: {v}")
-
-    print("\nLaunch Timing Prediction:")
-    for k, v in test_report['launch_timing'].items():
-        print(f"{k}: {v}")
-
-    print("\nExplanations:")
-    for r in test_report['explanations']:
-        print("-", r)
+    for k, v in report.items():
+        print(k, ":", v)
