@@ -11,41 +11,34 @@ class VenturePulsePredictor:
         print("Loading risk model...")
         self.model = joblib.load(MODEL_PATH)
 
-        print("Loading ML dataset...")
+        print("Loading dataset...")
         self.ml_df = pd.read_csv(ML_DATA_PATH)
 
         print("Loading similarity engine...")
         self.sim_engine = SimilarityEngine()
 
-        print(" VenturePulse Predictor Ready")
+        print("VenturePulse Predictor Ready")
 
-    # =================================================
-    # MARKET SIGNALS (DOMAIN-LEVEL — CORRECT DESIGN)
-    # =================================================
+
+    # MARKET SIGNALS (DOMAIN LEVEL)
+
     def _compute_market_signals(self, domain_clean):
-        """
-        Compute market signals at DOMAIN level.
-        This avoids fragile name matching and is industry-correct.
-        """
-
         domain_df = self.ml_df[self.ml_df["domain_clean"] == domain_clean]
 
-        # Fallback safety
         if domain_df.empty:
             domain_df = self.ml_df
 
         return {
-            "failed_rate": round(domain_df["status_failed"].mean(), 3),
-            "avg_funding": round(domain_df["funding_total_usd"].mean(), 2),
-            "avg_years_since_last_funding": round(
-                domain_df["years_since_last_funding"].mean(), 2
+            "failed_rate": float(round(domain_df["status_failed"].mean(), 3)),
+            "avg_funding": float(round(domain_df["funding_total_usd"].mean(), 2)),
+            "avg_years_since_last_funding": float(
+                round(domain_df["years_since_last_funding"].mean(), 2)
             ),
-            "crowdedness": len(domain_df),
+            "crowdedness": int(len(domain_df)),
         }
 
-    # =================================================
-    # LAUNCH TIMING PREDICTOR
-    # =================================================
+    # LAUNCH TIMING
+
     def _predict_launch_timing(self, domain_clean):
         domain_df = self.ml_df[self.ml_df["domain_clean"] == domain_clean]
 
@@ -58,64 +51,92 @@ class VenturePulsePredictor:
 
         if ratio > 0.25:
             return {
-                "market_speed": "Heating Up",
+                "market_speed": "Fast growth",
                 "recent_entry_rate": round(ratio, 3),
-                "recommended_launch_window": "Launch MVP within 3–4 months",
-                "reason": "Rapid entry of new startups in this market",
+                "recommended_launch_window": "Launch within 3–4 months",
+                "reason": "High rate of new market entrants",
             }
         elif ratio > 0.12:
             return {
-                "market_speed": "Moderate Growth",
+                "market_speed": "Moderate growth",
                 "recent_entry_rate": round(ratio, 3),
                 "recommended_launch_window": "Launch within 6–8 months",
-                "reason": "Steady growth in new competitors",
+                "reason": "Steady increase in competitors",
             }
         else:
             return {
-                "market_speed": "Slow / Early",
+                "market_speed": "Slow / early stage",
                 "recent_entry_rate": round(ratio, 3),
                 "recommended_launch_window": "Safe window: 9–12 months",
                 "reason": "Low recent competitive pressure",
             }
 
-    # =================================================
-    # EXPLANATION ENGINE (HONEST + DATA-DRIVEN)
-    # =================================================
-    def _generate_explanations(self, risk_score, signals, similar_startups):
+
+    # USP DIFFERENTIATION (SEMANTIC)
+
+    def _compute_usp_uniqueness(self, usp_text, similar_startups):
+        if not usp_text or len(usp_text.strip()) < 10:
+            return 0.0
+
+        usp_embedding = self.sim_engine.model.encode(
+            usp_text, normalize_embeddings=True
+        )
+
+        similarities = []
+
+        for s in similar_startups:
+            competitor_text = s.get("category_list", "")
+            if not competitor_text:
+                continue
+
+            comp_embedding = self.sim_engine.model.encode(
+                competitor_text, normalize_embeddings=True
+            )
+
+            similarity = float(usp_embedding @ comp_embedding)
+            similarities.append(similarity)
+
+        if not similarities:
+            return 0.0
+
+        avg_similarity = sum(similarities) / len(similarities)
+        return round(max(0.0, 1 - avg_similarity), 3)
+
+
+    # EXPLANATIONS
+
+    def _generate_explanations(self, risk_score, signals, similar_startups, usp_uniqueness):
         reasons = []
 
         if signals["failed_rate"] > 0.5:
-            reasons.append(
-                "Historically high failure rate in this domain"
-            )
+            reasons.append("Historically high failure rate in this domain")
 
         if signals["avg_years_since_last_funding"] > self.ml_df[
             "years_since_last_funding"
         ].quantile(0.75):
-            reasons.append(
-                "Long gaps since last funding are common in this domain"
-            )
+            reasons.append("Long gaps since last funding are common in this domain")
 
         if len(similar_startups) >= 5:
-            reasons.append(
-                "Multiple active competitors exist for similar ideas"
-            )
+            reasons.append("Several established competitors exist in this space")
+
+        if usp_uniqueness > 0.4:
+            reasons.append("Product positioning shows strong differentiation")
+        elif usp_uniqueness > 0.2:
+            reasons.append("Product positioning shows moderate differentiation")
 
         if risk_score > 0.7:
-            reasons.append("ML model predicts relatively high failure risk")
+            reasons.append("Model indicates relatively high risk")
         elif risk_score < 0.3:
-            reasons.append("ML model predicts relatively low failure risk")
+            reasons.append("Model indicates relatively low risk")
 
         if not reasons:
-            reasons.append(
-                "No strong historical risk indicators detected"
-            )
+            reasons.append("No strong historical risk indicators detected")
 
         return reasons
 
-    # =================================================
-    # MAIN ANALYSIS PIPELINE
-    # =================================================
+
+    # MAIN ANALYSIS
+
     def analyze_startup(
         self,
         user_idea_text,
@@ -124,21 +145,17 @@ class VenturePulsePredictor:
         funding_rounds,
         years_since_founded,
         years_since_last_funding,
+        usp_text=None,
     ):
         print("\n--- Analyzing Startup ---")
 
-        #  Semantic similarity (competitors)
         similar = self.sim_engine.find_similar_startups(
             user_idea_text, top_n=5
         )
 
-        #  Market intelligence (domain-level)
         signals = self._compute_market_signals(domain_clean)
-
-        #  Launch timing
         launch_timing = self._predict_launch_timing(domain_clean)
 
-        #  ML risk prediction
         input_df = pd.DataFrame(
             [
                 {
@@ -151,24 +168,30 @@ class VenturePulsePredictor:
             ]
         )
 
-        risk_score = float(self.model.predict_proba(input_df)[0, 1])
+        base_risk = float(self.model.predict_proba(input_df)[0, 1])
 
-        # Explanations
+        usp_uniqueness = self._compute_usp_uniqueness(usp_text, similar)
+
+        MAX_USP_IMPACT = 0.15
+        final_risk = round(base_risk * (1 - usp_uniqueness * MAX_USP_IMPACT), 3)
+
         explanations = self._generate_explanations(
-            risk_score, signals, similar
+            final_risk, signals, similar, usp_uniqueness
         )
 
         return {
             "idea": user_idea_text,
             "domain": domain_clean,
-            "risk_score": round(risk_score, 3),
+            "risk_before_adjustment": round(base_risk, 3),
+            "risk_final": final_risk,
             "risk_label": (
                 "High"
-                if risk_score > 0.7
+                if final_risk > 0.7
                 else "Medium"
-                if risk_score > 0.4
+                if final_risk > 0.4
                 else "Low"
             ),
+            "usp_uniqueness_score": usp_uniqueness,
             "similar_startups": similar,
             "market_signals": signals,
             "launch_timing": launch_timing,
@@ -176,21 +199,20 @@ class VenturePulsePredictor:
         }
 
 
-# =================================================
 # MANUAL TEST
-# =================================================
 if __name__ == "__main__":
     predictor = VenturePulsePredictor()
 
     report = predictor.analyze_startup(
-        user_idea_text="AI tool for automating resume screening for HR teams",
+        user_idea_text="Automated resume screening system for HR teams",
         domain_clean="AI",
         funding_total_usd=500000,
         funding_rounds=1,
         years_since_founded=1,
         years_since_last_funding=1,
+        usp_text="Uses proprietary resume embeddings trained on Indian hiring data",
     )
 
-    print("\n===== VENTURE_PULSE REPORT =====")
+    print("\n===== REPORT =====")
     for k, v in report.items():
         print(k, ":", v)
