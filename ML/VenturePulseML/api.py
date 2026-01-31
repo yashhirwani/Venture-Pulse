@@ -18,6 +18,14 @@ class AnalyzeRequest(BaseModel):
     usp: Optional[str] = None   # IMPORTANT
 
 
+<<<<<<< HEAD
+=======
+
+# -------- Response Endpoint --------
+
+
+
+>>>>>>> a866db563dfe853e0c520ebaaae4e2ed81e23147
 @app.post("/analyze")
 def analyze(req: AnalyzeRequest):
     result = predictor.analyze_startup(
