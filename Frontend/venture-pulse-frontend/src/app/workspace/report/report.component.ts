@@ -1,5 +1,6 @@
-
 import { Component, OnInit } from '@angular/core';
+import { AnalysisService } from '../analysis.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-report',
@@ -7,30 +8,39 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./report.component.css']
 })
 export class ReportComponent implements OnInit {
-  isLoading = false;
-  gaugeRotation = 'rotate(0deg)'; // Start at 0 for animation
+  isLoading = true;
+  report: any = null; // Initialize as null to show loader
+  gaugeRotation = 'rotate(0deg)';
 
-  // Mock data structure matching your merged template
-  report: any = {
-    title: 'VenturePulse AI',
-    verdict: 'PROMISING', // Use uppercase to match CSS: PROMISING, RISKY, AVOID
-    risk: { score: 74, level: 'Medium', rotation: 0 },
-    market: { maturity: 'Emerging', demand: 'Upward (Strong)', potential: '8.2/10' },
-    incumbentAlerts: [],
-    recommendations: [
-      'Focus on niche B2B automation before scaling to consumer markets.',
-      'Secure intellectual property for the core processing algorithm.',
-      'Establish a partnership with cloud infrastructure providers early.'
-    ],
-    timestamp: new Date()
-  };
+  constructor(
+    private analysisService: AnalysisService, 
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void {
-    // Trigger animation after a slight delay
-    setTimeout(() => {
-      const angle = (this.report.risk.score / 100) * 180;
-      this.gaugeRotation = `rotate(${angle}deg)`;
-      this.report.risk.rotation = angle;
-    }, 300);
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isLoading = true;
+      // Convert route ID to number to match your service signature
+      this.analysisService.getReportById(Number(id)).subscribe({
+        next: (data) => {
+          this.report = data;
+          this.calculateVisuals();
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching report:', err);
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  private calculateVisuals() {
+    if (this.report && this.report.riskScore) {
+      // Logic: 0 score = -90deg, 100 score = 90deg
+      const rotationDegree = (this.report.riskScore / 100) * 180 - 90;
+      this.gaugeRotation = `rotate(${rotationDegree}deg)`;
+    }
   }
 }

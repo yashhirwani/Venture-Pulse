@@ -3,48 +3,43 @@
 
   <div class="form-card glass" *ngIf="!isSubmitting">
     <header class="form-header">
-      
-      <h1>New <span class="highlight">Analysis Scan</span></h1>
-      <p>Enter the startup details to begin the market & risk assessment.</p>
+      <h1>New <span class="highlight">Intelligence Scan</span></h1>
+      <p>Configure the parameters for the neural risk engine.</p>
     </header>
 
     <form (ngSubmit)="startNeuralScan()" #scanForm="ngForm">
+      
       <div class="input-group">
-        <label>Startup Name</label>
-        <input type="text" name="name" [(ngModel)]="analysisForm.startupName" placeholder="e.g. NexusFlow AI" required>
+        <label>Startup Concept (Idea Text)</label>
+        <textarea 
+          name="ideaText" 
+          [(ngModel)]="analysisForm.ideaText" 
+          placeholder="e.g. AI tool to predict startup failure..."
+          rows="3"
+          required
+        ></textarea>
       </div>
 
       <div class="input-row">
         <div class="input-group">
-          <label>Industry</label>
-          <select name="industry" [(ngModel)]="analysisForm.industry" required>
-            <option value="">Select Industry...</option>
-            <option value="SaaS">SaaS</option>
-            <option value="FinTech">FinTech</option>
-            <option value="HealthTech">HealthTech</option>
-            <option value="Web3">Web3</option>
-          </select>
+          <label>Industry / Domain</label>
+          <input type="text" name="domain" [(ngModel)]="analysisForm.domain" placeholder="e.g. AI / SaaS" required>
         </div>
         <div class="input-group">
-          <label>Primary Market</label>
-          <select name="market" [(ngModel)]="analysisForm.targetMarket">
-            <option value="Global">Global</option>
-            <option value="North America">North America</option>
-            <option value="Europe">Europe</option>
-            <option value="Asia">Asia</option>
-          </select>
+          <label>Target Users</label>
+          <input type="text" name="targetUsers" [(ngModel)]="analysisForm.targetUsers" placeholder="e.g. Startup founders" required>
         </div>
       </div>
 
-      <div class="input-group">
-        <label>Concept Description</label>
-        <textarea 
-          name="desc" 
-          [(ngModel)]="analysisForm.description" 
-          placeholder="Describe the problem, solution, and core technology..."
-          rows="5"
-          required
-        ></textarea>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Pricing Model</label>
+          <input type="text" name="pricing" [(ngModel)]="analysisForm.pricingModel" placeholder="e.g. Subscription" required>
+        </div>
+        <div class="input-group">
+          <label>Team Composition</label>
+          <input type="text" name="team" [(ngModel)]="analysisForm.teamInfo" placeholder="e.g. 2 devs, 1 lead" required>
+        </div>
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="!scanForm.valid">

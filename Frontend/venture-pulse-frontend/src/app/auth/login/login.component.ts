@@ -23,7 +23,11 @@ export class LoginComponent {
       this.handleOtpLogin();
     } else {
       this.authService.login(this.loginData).subscribe({
-        next: (res) => this.router.navigate(['/workspace/dashboard']),
+        next: (res) => {
+          console.log(res);
+      localStorage.setItem('user', JSON.stringify(res.id));
+      this.router.navigate(['/dashboard']);
+        },
         error: (err) => {
           this.isLoading = false;
           this.errorMessage = 'Invalid email or password.';

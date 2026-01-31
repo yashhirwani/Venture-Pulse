@@ -3,8 +3,9 @@ import { AnalysisService } from '../analysis.service';
 
 interface HistoryItem {
   id: string;
-  startup: string;
+  ideaText: string;
   domain: string;
+  targetUsers: string;
   verdict: 'PROMISING' | 'RISKY' | 'AVOID';
   risk: number;
   date: string;
@@ -23,37 +24,48 @@ export class HistoryComponent implements OnInit {
 
   constructor(private analysisService: AnalysisService) {}
 
+  private getUserId(): number {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user;
+  }
   ngOnInit(): void {
-    this.analysisService.getHistory().subscribe(data => {
+  
+  
+  this.analysisService.getHistory(this.getUserId()).subscribe({
+    next: (data: any[]) => {
       this.historyItems = data.map((item: any) => ({
         id: item.id,
-        startup: item.startup || item.startup_name || '—',
-        domain: item.domain || item.industry || '—',
-        verdict: item.verdict,
-        risk: item.risk || item.risk_score || 0,
-        date: item.date || item.created_at
+        ideaText: item.ideaText || '—',
+        domain: item.domain || '—',
+        targetUsers: item.targetUsers || '—',
+        verdict: item.verdict || 'RISKY',
+        risk: item.riskScore || 0,
+        date: item.createdAt || new Date()
       }));
-
       this.filteredItems = this.historyItems;
       this.isLoading = false;
+    },
+    error: () => this.isLoading = false
+  });
+}
+
+removeAnalysis(id: string): void {
+  if (confirm('Permanently delete this intelligence brief?')) {
+    // Convert string ID to number if your backend requires it
+    const reportId = Number(id); 
+    this.analysisService.deleteReport(reportId).subscribe(() => {
+      this.historyItems = this.historyItems.filter(item => item.id !== id);
+      this.onSearch();
     });
   }
+}
 
   onSearch(): void {
     const q = this.searchQuery.toLowerCase();
     this.filteredItems = this.historyItems.filter(item =>
-      item.startup.toLowerCase().includes(q)
+      item.ideaText.toLowerCase().includes(q) || item.domain.toLowerCase().includes(q)
     );
   }
 
-  // Add this function to your HistoryComponent class
-removeAnalysis(id: string): void {
-  if (confirm('Are you sure you want to delete this intelligence brief?')) {
-    this.analysisService.deleteReport(id).subscribe(() => {
-      // Update the UI by removing the item from the local arrays
-      this.historyItems = this.historyItems.filter(item => item.id !== id);
-      this.onSearch(); // Refresh the filtered list
-    });
-  }
-}
+  
 }

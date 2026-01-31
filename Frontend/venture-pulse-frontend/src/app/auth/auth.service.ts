@@ -6,7 +6,7 @@ import { Observable, BehaviorSubject, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://localhost:8081/api/auth';
   
   // Track auth status for UI components (like the Navbar)
   private authStatus = new BehaviorSubject<boolean>(this.isAuthenticated());

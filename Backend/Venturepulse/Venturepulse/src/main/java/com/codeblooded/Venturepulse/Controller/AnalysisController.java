@@ -27,13 +27,13 @@ public class AnalysisController {
 
     // Get report history
     @GetMapping("/history/{userId}")
-    public List<Report> history(@PathVariable Long userId) {
+    public List<Report> history(@PathVariable (name = "userId") Long userId) {
         return service.getUserHistory(userId);
     }
 
     // Get single report
     @GetMapping("/{reportId}")
-    public Report getReport(@PathVariable Long reportId) {
+    public Report getReport(@PathVariable (name = "reportId") Long reportId) {
         return service.getReportById(reportId);
     }
 }

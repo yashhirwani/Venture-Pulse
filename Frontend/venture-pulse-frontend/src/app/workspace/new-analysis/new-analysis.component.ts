@@ -6,36 +6,42 @@ import { AnalysisService } from '../analysis.service';
   selector: 'app-new-analysis',
   templateUrl: './new-analysis.component.html',
   styleUrls: ['./new-analysis.component.css']
+  // OR add `standalone: true` if you're using standalone components
 })
 export class NewAnalysisComponent {
 
-  
-  
-  // Model for the venture input
+  private getUserId(): number {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user;
+  }
   analysisForm = {
-    startupName: '',
-    industry: '',
-    description: '',
-    targetMarket: 'Global'
+    userId: this.getUserId(),
+    ideaText: '',
+    domain: '',
+    targetUsers: '',
+    pricingModel: '',
+    teamInfo: ''
   };
 
   isSubmitting = false;
 
-  constructor(private router: Router, private analysisService: AnalysisService) {}
+  constructor(
+    private router: Router,
+    private analysisService: AnalysisService
+  ) {}
 
-// src/app/workspace/new-analysis/new-analysis.component.ts
-
-startNeuralScan() {
-  this.isSubmitting = true;
-
-  // Added explicit type ': any' to the report parameter to satisfy TS7006
-  this.analysisService.runNeuralAnalysis(this.analysisForm).subscribe((report: any) => {
-    this.isSubmitting = false;
-    
-    // Ensure the ID exists before navigating
-    if (report && report.id) {
-      this.router.navigate(['/workspace/report', report.id]);
-    }
-  });
-}
+  startNeuralScan() {
+    this.isSubmitting = true;
+    console.log(this.analysisForm);
+    this.analysisService.runNeuralAnalysis(this.analysisForm).subscribe({
+      next: (report: any) => {
+        this.isSubmitting = false;
+          this.router.navigate(['/workspace/report', report.id]);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        console.error('Scan failed:', err);
+      }
+    });
+  }
 }

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NewAnalysisComponent } from './new-analysis/new-analysis.component';
-import { ProcessingComponent } from './processing/processing.component';
 import { ReportComponent } from './report/report.component';
 import { HistoryComponent } from './history/history.component';
 import { IdeaFormComponent } from './idea-form/idea-form.component';
@@ -16,6 +15,8 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartComponent } from '../shared/chart/chart.component';
 import { SharedModule } from '../shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
+import { ProcessingComponent } from './processing/processing.component';
 
 
 
@@ -39,7 +40,8 @@ import { SharedModule } from '../shared/shared.module';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    HttpClientModule
   ]
 })
 export class WorkspaceModule { }

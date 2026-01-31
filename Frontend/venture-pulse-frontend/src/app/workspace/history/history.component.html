@@ -1,89 +1,81 @@
-<div class="history-container">
-  <app-loader *ngIf="isLoading"></app-loader>
+<div class="vault-wrapper-white">
+  <div class="vault-container">
+    <app-loader *ngIf="isLoading"></app-loader>
 
-  <ng-container *ngIf="!isLoading">
-    <header class="vault-header">
-      <div class="header-text">
-        <h1>Analysis <span class="highlight">Vault</span></h1>
-        <p>Access and manage your historical intelligence briefs.</p>
-      </div>
-
-      <div class="vault-actions">
-        <input
-          type="text"
-          placeholder="Filter by startup name..."
-          [(ngModel)]="searchQuery"
-          (input)="onSearch()"
-          class="search-input"
-        />
-      </div>
-    </header>
-
-    <div class="vault-card glass">
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Startup Entity</th>
-            <th>Industry</th>
-            <th>Neural Verdict</th>
-            <th>Risk Score</th>
-            <th>Generated On</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody *ngIf="filteredItems.length; else emptyState">
-          <tr *ngFor="let item of filteredItems">
-            <td><strong>{{ item.startup }}</strong></td>
-
-            <td>{{ item.domain }}</td>
-
-            <td>
-              <span
-                class="v-badge"
-                [attr.data-verdict]="item.verdict">
-                {{ item.verdict }}
-              </span>
-            </td>
-
-            <td>
-              <div class="risk-wrapper">
-                <div class="risk-bar-container">
-                  <div
-                    class="risk-bar-fill"
-                    [style.width.%]="item.risk">
-                  </div>
-                </div>
-                <small class="risk-label">{{ item.risk }}%</small>
-              </div>
-            </td>
-
-            <td>{{ item.date | date:'mediumDate' }}</td>
-
-            <td>
-              <div class="action-group" style="display: flex; gap: 8px;">
-                <button
-                  class="btn-view"
-                  [routerLink]="['/workspace/report', item.id]">
-                  Open
-                </button>
-                <button 
-                  class="btn-delete" 
-                  (click)="removeAnalysis(item.id)"
-                  title="Delete Brief">
-                  🗑️
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <ng-template #emptyState>
-        <div class="empty-state">
-          No analysis briefs found.
+    <ng-container *ngIf="!isLoading">
+      <header class="vault-header">
+        <div class="header-text">
+          <h1>Analysis <span class="brand-text">Vault</span></h1>
+          <p class="subtitle">Neural risk intelligence repository for venture assessments.</p>
         </div>
-      </ng-template>
-    </div>
-  </ng-container>
+
+        <div class="vault-actions">
+          <div class="search-container">
+            <input
+              type="text"
+              placeholder="Search ideas or domains..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearch()"
+              class="minimal-search"
+            />
+          </div>
+        </div>
+      </header>
+
+      <div class="table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Concept / Idea</th>
+              <th>Domain</th>
+              <th>Target Users</th>
+              <th>Verdict</th>
+              <th>Risk Score</th>
+              <th class="right-align">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="filteredItems.length; else emptyState">
+            <tr *ngFor="let item of filteredItems" class="data-row">
+              <td class="idea-cell">
+                <span class="idea-title">{{ item.ideaText | slice:0:55 }}{{ item.ideaText.length > 55 ? '...' : '' }}</span>
+              </td>
+
+              <td><span class="domain-tag">{{ item.domain }}</span></td>
+              
+              <td><span class="user-text">{{ item.targetUsers }}</span></td>
+
+              <td>
+                <span class="v-badge" [attr.data-verdict]="item.verdict">
+                  {{ item.verdict }}
+                </span>
+              </td>
+
+              <td>
+                <div class="risk-meter">
+                  <div class="meter-track">
+                    <div class="meter-fill" [style.width.%]="item.risk"></div>
+                  </div>
+                  <span class="meter-label">{{ item.risk }}%</span>
+                </div>
+              </td>
+
+              <td class="right-align">
+                <div class="action-btns">
+                  <button class="btn-open-brief" [routerLink]="['/workspace/report', item.id]">Open</button>
+                  <button class="btn-delete-brief" (click)="removeAnalysis(item.id)">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyState>
+          <div class="empty-view">
+            <p>No historical analysis found.</p>
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+  </div>
 </div>

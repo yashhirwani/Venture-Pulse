@@ -8,31 +8,46 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent {
-  userData = { fullName: '', email: '', password: '', confirmPassword: '' };
+  userData = { name: '', email: '', password: '', confirmPassword: '' };
   isLoading = false;
   errorMessage = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSignUp() {
-    if (this.userData.password !== this.userData.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    const { confirmPassword, ...payload } = this.userData;
-    
-    this.authService.signup(payload).subscribe({
-      next: () => this.router.navigate(['/login'], { queryParams: { registered: true } }),
-      error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Registration failed';
-      }
-    });
+  if (this.userData.password !== this.userData.confirmPassword) {
+    this.errorMessage = 'Passwords do not match';
+    return;
   }
+
+  this.isLoading = true;
+  this.errorMessage = '';
+
+  const { confirmPassword, ...payload } = this.userData;
+
+  this.authService.signup(payload).subscribe({
+    next: () => {
+      this.isLoading = false;
+      this.router.navigate(['/login'], { queryParams: { registered: true } });
+    },
+    error: (err) => {
+      this.isLoading = false;
+
+      // 🔥 IMPORTANT FIX
+      if (err.status === 200 || err.status === 201) {
+        // Backend returned success but Angular mis-read it
+        this.router.navigate(['/login'], { queryParams: { registered: true } });
+        return;
+      }
+
+      this.errorMessage =
+        err?.error?.message ||
+        err?.error ||
+        'Registration failed';
+    }
+  });
+}
+
 
   socialLogin(provider: string) {
   // Ensure your Spring Boot backend has: 

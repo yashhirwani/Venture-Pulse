@@ -1,37 +1,43 @@
 import { Injectable } from '@angular/core';
-import { of, Observable, delay } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnalysisService {
-  // Mock data for your Analysis Vault
-  private mockVaultData = [
-    { id: '101', startup: 'NexusFlow AI', domain: 'SaaS', verdict: 'PROMISING', risk: 28, date: new Date() },
-    { id: '102', startup: 'Solaris IQ', domain: 'CleanTech', verdict: 'RISKY', risk: 64, date: new Date() },
-    { id: '103', startup: 'Aura Health', domain: 'HealthTech', verdict: 'PROMISING', risk: 32, date: new Date() }
-  ];
 
-  constructor() {}
 
-  // 🚀 THIS FIXES TS2339
-  getHistory(): Observable<any[]> {
-    return of(this.mockVaultData).pipe(delay(2000));
-  }
+  private BASE_URL = 'http://localhost:8081/api';
 
-  // Keep this here so your New Analysis page doesn't break again
+  constructor(private http: HttpClient) {}
+
+  // 🔹 1. Submit a new startup idea (AI Analysis)
   runNeuralAnalysis(formData: any): Observable<any> {
-    return of({ id: '101', ...formData }).pipe(delay(4500));
+    return this.http.post(
+      `${this.BASE_URL}/analysis/submit`,
+      formData
+    );
   }
 
+  // 🔹 2. Get history of reports for a user
+  getHistory(userId: number): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.BASE_URL}/analysis/history/${userId}`
+    );
+  }
 
-// Add this to your AnalysisService class
-deleteReport(id: string): Observable<boolean> {
-  // Filter out the item with the matching ID
-  this.mockVaultData = this.mockVaultData.filter(item => item.id !== id);
-  
-  // Return a success signal after a small delay
-  return of(true).pipe(delay(500));
-}
+  // 🔹 3. Get a single report by ID
+  getReportById(reportId: number): Observable<any> {
+    return this.http.get(
+      `${this.BASE_URL}/analysis/report/${reportId}`
+    );
+  }
 
+  // 🔹 4. Delete a report
+  deleteReport(reportId: number): Observable<any> {
+    return this.http.delete(
+      `${this.BASE_URL}/analysis/${reportId}`
+    );
+  }
 }
