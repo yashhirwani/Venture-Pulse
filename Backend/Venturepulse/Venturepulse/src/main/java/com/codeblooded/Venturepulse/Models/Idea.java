@@ -12,5 +12,6 @@ public class Idea {
         private String targetUsers;
         private String pricingModel;
         private String teamInfo;
+        private String usp;
     }
 

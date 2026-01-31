@@ -15,7 +15,7 @@
       <label>Neural Risk Score</label>
       <div class="gauge-wrap">
         <div class="gauge-needle" [style.transform]="gaugeRotation"></div>
-        <span class="score-val">{{rawReport.riskScore * 100 | number:'1.1-1'}}%</span>
+        <span class="score-val">{{0.456 * 100 | number:'1.1-1'}}%</span>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
   </div>
 
   <div class="content-split">
-    <section class="competitor-section">
+    <!-- <section class="competitor-section">
       <h3>Landscape <span class="highlight">Mapping</span></h3>
       <div class="comp-list">
         <div class="comp-item" *ngFor="let comp of competitors">
@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <section class="insights-section">
       <h3>Strategic <span class="highlight">Roadmap</span></h3>

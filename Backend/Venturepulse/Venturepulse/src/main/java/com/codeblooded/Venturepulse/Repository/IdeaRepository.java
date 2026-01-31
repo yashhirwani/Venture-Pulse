@@ -14,13 +14,14 @@ public class IdeaRepository {
 
     public Long save(Idea idea) {
         jdbc.update(
-                "INSERT INTO ideas(user_id, idea_text, domain, target_users, pricing_model, team_info) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO ideas(user_id, idea_text, domain, target_users, pricing_model, team_info,usp) VALUES (?, ?, ?, ?, ?, ?,?)",
                 idea.getUserId(),
                 idea.getIdeaText(),
                 idea.getDomain(),
                 idea.getTargetUsers(),
                 idea.getPricingModel(),
-                idea.getTeamInfo()
+                idea.getTeamInfo(),
+                idea.getUsp()
         );
 
         return jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);

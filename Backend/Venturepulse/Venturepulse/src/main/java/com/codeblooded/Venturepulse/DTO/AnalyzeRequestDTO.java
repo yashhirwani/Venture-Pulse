@@ -13,6 +13,7 @@ public class AnalyzeRequestDTO {
     private int funding_rounds;
     private int years_since_founded;
     private int years_since_last_funding;
+    private String usp;
 
     // Getters and Setters
 }

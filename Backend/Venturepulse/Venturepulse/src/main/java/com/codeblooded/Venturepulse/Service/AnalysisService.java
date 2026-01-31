@@ -31,7 +31,7 @@ public class AnalysisService {
 
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO ideas(user_id, idea_text, domain, target_users, pricing_model, team_info) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO ideas(user_id, idea_text, domain, target_users, pricing_model, team_info,usp) VALUES (?, ?, ?, ?, ?, ?,?)",
                     new String[]{"id"}
             );
             ps.setLong(1, idea.getUserId());
@@ -40,10 +40,11 @@ public class AnalysisService {
             ps.setString(4, idea.getTargetUsers());
             ps.setString(5, idea.getPricingModel());
             ps.setString(6, idea.getTeamInfo());
+            ps.setString(7,idea.getUsp());
             return ps;
         }, ideaKeyHolder);
 
-        Long ideaId = ideaKeyHolder.getKey().longValue(); // ✅ SAFE
+        long ideaId = Objects.requireNonNull(ideaKeyHolder.getKey()).longValue(); // ✅ SAFE
 
         // 2️⃣ BUILD PYTHON REQUEST
         AnalyzeRequestDTO request = new AnalyzeRequestDTO();
@@ -57,18 +58,19 @@ public class AnalysisService {
         // 3️⃣ CALL PYTHON ML API
         AnalyzeResponseDTO response = aiClientService.analyzeStartup(request);
 
-        double riskScore = response.getRisk_score();
-        String verdict = response.getRisk_label();
-        String competitors = response.getSimilar_startups().toString();
+        double riskScore = response.getRiskScore();
+        String verdict = response.getRiskLabel();
+        String competitors = response.getSimilarStartups().toString();
         String recommendations = response.getExplanations().toString();
-        String signals = response.getMarket_signals().toString();
+        String signals = response.getMarketSignals().toString();
+        double uspScore = response.getUspScore();
 
         // 4️⃣ INSERT REPORT (WITH GENERATED ID)
         KeyHolder reportKeyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO reports(idea_id, risk_score, verdict, competitors, recommendations, signals) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO reports(idea_id, risk_score, verdict, competitors, recommendations, signals,usp_score) VALUES (?, ?, ?, ?, ?, ?,?)",
                     new String[]{"id"}
             );
             ps.setLong(1, ideaId);
@@ -77,6 +79,7 @@ public class AnalysisService {
             ps.setString(4, competitors);
             ps.setString(5, recommendations);
             ps.setString(6, signals);
+            ps.setDouble(7,uspScore);
             return ps;
         }, reportKeyHolder);
 
@@ -91,7 +94,7 @@ public class AnalysisService {
         r.setCompetitors(competitors);
         r.setRecommendations(recommendations);
         r.setMarketSignals(signals);
-
+        r.setUspScore(uspScore);
         return r;
     }
 
@@ -114,6 +117,7 @@ public class AnalysisService {
                     r.setCompetitors(rs.getString("competitors"));
                     r.setRecommendations(rs.getString("recommendations"));
                     r.setMarketSignals(rs.getString("signals"));
+                    r.setUspScore(rs.getDouble("usp_score"));
                     return r;
                 },
                 userId
@@ -133,6 +137,7 @@ public class AnalysisService {
                     r.setCompetitors(rs.getString("competitors"));
                     r.setRecommendations(rs.getString("recommendations"));
                     r.setMarketSignals(rs.getString("signals"));
+                    r.setUspScore(rs.getDouble("usp_score"));
                     return r;
                 },
                 reportId

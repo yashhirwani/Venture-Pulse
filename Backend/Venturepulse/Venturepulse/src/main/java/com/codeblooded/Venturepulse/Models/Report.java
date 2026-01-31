@@ -13,4 +13,5 @@ public class Report {
     private String competitors;
     private String recommendations;
     private String marketSignals;
+    private double uspScore;
 }

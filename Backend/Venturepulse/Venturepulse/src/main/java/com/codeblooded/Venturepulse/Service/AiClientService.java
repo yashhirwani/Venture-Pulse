@@ -12,7 +12,7 @@ public class AiClientService {
 
     public AiClientService(WebClient.Builder builder) {
         this.webClient = builder
-                .baseUrl("http://localhost:8082")
+                .baseUrl("http://localhost:8084")
                 .build();
     }
 

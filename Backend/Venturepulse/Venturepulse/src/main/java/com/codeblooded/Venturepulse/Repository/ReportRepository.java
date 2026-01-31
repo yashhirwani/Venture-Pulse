@@ -17,12 +17,13 @@ public class ReportRepository {
 
     public void save(Report r) {
         jdbc.update(
-                "INSERT INTO reports(idea_id, risk_score, verdict, competitors, recommendations) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO reports(idea_id, risk_score, verdict, competitors, recommendations,usp_score) VALUES (?, ?, ?, ?, ?,?)",
                 r.getIdeaId(),
                 r.getRiskScore(),
                 r.getVerdict(),
                 r.getCompetitors(),
-                r.getRecommendations()
+                r.getRecommendations(),
+                r.getUspScore()
         );
     }
 
@@ -43,6 +44,7 @@ public class ReportRepository {
                     r.setVerdict(rs.getString("verdict"));
                     r.setCompetitors(rs.getString("competitors"));
                     r.setRecommendations(rs.getString("recommendations"));
+                    r.setUspScore(rs.getDouble("usp_score"));
                     return r;
                 },
                 userId
@@ -60,6 +62,7 @@ public class ReportRepository {
                     r.setVerdict(rs.getString("verdict"));
                     r.setCompetitors(rs.getString("competitors"));
                     r.setRecommendations(rs.getString("recommendations"));
+                    r.setUspScore(rs.getDouble("usp_score"));
                     return r;
                 },
                 id
