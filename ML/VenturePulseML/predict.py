@@ -203,14 +203,18 @@ class VenturePulsePredictor:
 if __name__ == "__main__":
     predictor = VenturePulsePredictor()
 
+    idea = input("Enter startup idea description: ")
+    domain = input("Enter domain: ")
+    usp = input("Enter USP / differentiator (optional): ")
+
     report = predictor.analyze_startup(
-        user_idea_text="Automated resume screening system for HR teams",
-        domain_clean="AI",
+        user_idea_text=idea,
+        domain_clean=domain,
         funding_total_usd=500000,
         funding_rounds=1,
         years_since_founded=1,
         years_since_last_funding=1,
-        usp_text="Uses proprietary resume embeddings trained on Indian hiring data",
+        usp_text=usp if usp.strip() else None,
     )
 
     print("\n===== REPORT =====")
