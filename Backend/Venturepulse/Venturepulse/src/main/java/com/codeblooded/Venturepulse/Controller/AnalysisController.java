@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/analysis")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AnalysisController {
 
     private final AnalysisService service;
@@ -32,7 +32,7 @@ public class AnalysisController {
     }
 
     // Get single report
-    @GetMapping("/{reportId}")
+    @GetMapping("/report/{reportId}")
     public Report getReport(@PathVariable (name = "reportId") Long reportId) {
         return service.getReportById(reportId);
     }

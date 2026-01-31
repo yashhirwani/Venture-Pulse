@@ -23,6 +23,9 @@ class StartupRequest(BaseModel):
 
 
 # -------- Response Endpoint --------
+
+
+
 @app.post("/analyze")
 def analyze_startup(req: AnalyzeRequest):
     report = predictor.analyze_startup(
