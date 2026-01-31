@@ -9,13 +9,17 @@ predictor = VenturePulsePredictor()
 
 
 # -------- Request Schema --------
-class AnalyzeRequest(BaseModel):
+from typing import Optional
+
+class StartupRequest(BaseModel):
     idea: str
     domain: str
     funding_total_usd: float
     funding_rounds: int
     years_since_founded: int
     years_since_last_funding: int
+    usp: Optional[str] = None
+
 
 
 # -------- Response Endpoint --------
