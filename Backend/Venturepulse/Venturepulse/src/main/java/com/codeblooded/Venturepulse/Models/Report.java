@@ -8,8 +8,9 @@ import lombok.Setter;
 public class Report {
     private Long id;
     private Long ideaId;
-    private int riskScore;
+    private double riskScore;
     private String verdict;
     private String competitors;
     private String recommendations;
+    private String marketSignals;
 }
