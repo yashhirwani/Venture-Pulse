@@ -1,19 +1,44 @@
 <nav class="nav-container-fixed">
   <div class="nav-content-left">
-    <!-- <div class="search-box">
-      <span class="s-icon">🔍</span>
-      <input type="text" placeholder="Search ideas, reports, or competitors...">
-    </div> -->
+    <!-- <div class="logo-text">Venture<span>Pulse</span></div> -->
   </div>
 
   <div class="nav-content-right">
-    <div class="nav-date">Friday, January 30, 2026</div>
-    <div class="nav-profile">
-      <div class="nav-user">
-        <span class="nav-name">Alex Venture</span>
-        <span class="nav-role">PRO INVESTOR</span>
+    <div class="nav-date">
+      {{ today | date:'EEEE, MMMM d, y' }}
+    </div>
+
+    <!-- PROFILE WRAPPER (anchor) -->
+    <div class="profile-group" (click)="toggleProfile($event)">
+      <!-- Trigger -->
+      <div class="profile-trigger" style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <div class="nav-user-info">
+          <span class="nav-name">Alex Venture</span>
+          <span class="nav-role">PRO INVESTOR</span>
+        </div>
+        <div class="nav-avatar">AV</div>
       </div>
-      <div class="nav-avatar">AV</div>
+
+      <!-- Dropdown -->
+      <div class="profile-dropdown" *ngIf="showProfileMenu">
+        <ul class="d-links">
+          <li>
+            <a routerLink="/workspace/profile">Profile</a>
+          </li>
+          <li>
+            <a routerLink="/workspace/history">My Reports</a>
+          </li>
+          <li>
+            <a routerLink="/workspace/settings">Settings</a>
+          </li>
+
+          <li class="divider"></li>
+
+          <li>
+            <button class="logout-btn" (click)="logout()">Logout</button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
